@@ -1,18 +1,3 @@
-//import { Component, OnInit } from '@angular/core';
-
-//@Component({
-//  selector: 'app-map-box',
-//  templateUrl: './map-box.component.html',
-//  styleUrls: ['./map-box.component.scss']
-//})
-//export class MapBoxComponent implements OnInit {
-
-//  constructor() { }
-
-//  ngOnInit() {
-//  }
-
-//}
 
 import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
@@ -28,6 +13,11 @@ import { GeoJson, FeatureCollection } from '../map';
 export class MapBoxComponent implements OnInit{
 
   /// default settings
+
+  /// upon login, the default lat/lng info can be drawn from account.
+  /// Otherwise, there will be fake information for markers shown
+  /// to demonstrate what the application can do
+
   map: mapboxgl.Map;
   style = 'mapbox://styles/mapbox/outdoors-v9';
   lat = 37.75;
@@ -66,7 +56,7 @@ export class MapBoxComponent implements OnInit{
     this.map = new mapboxgl.Map({
       container: 'map',
       style: this.style,
-      zoom: 14,
+      zoom: 16,
       center: [this.lng, this.lat]
     });
 
