@@ -33,6 +33,9 @@ import * as firebaseui from 'firebaseui';
 
 import {AngularFireModule} from '@angular/fire';
 import { FirebaseUiComponent } from './firebase-ui/firebase-ui.component';
+//import { MainComponent } from './main/main.component';
+import { ResultPageComponent } from './result-page/result-page.component';
+import { AppRoutingModule } from './app-routing.module';
 // import {AngularFireAuthModule} from '@angular/fire/auth';
 
 
@@ -41,25 +44,25 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: 'popup',
   signInOptions: [
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    {
-      scopes: [
-        'public_profile',
-        'email',
-        'user_likes',
-        'user_friends'
-      ],
-      customParameters: {
-        'auth_type': 'reauthenticate'
-      },
-      provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID
-    },
-    firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-    firebase.auth.GithubAuthProvider.PROVIDER_ID,
-    {
-      requireDisplayName: false,
-      provider: firebase.auth.EmailAuthProvider.PROVIDER_ID
-    },
-    firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+    //{
+    //  scopes: [
+    //    'public_profile',
+    //    'email',
+    //    'user_likes',
+    //    'user_friends'
+    //  ],
+    //  customParameters: {
+    //    'auth_type': 'reauthenticate'
+    //  },
+    //  provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID
+    //},
+    //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+    //firebase.auth.GithubAuthProvider.PROVIDER_ID,
+    //{
+    //  requireDisplayName: false,
+    //  provider: firebase.auth.EmailAuthProvider.PROVIDER_ID
+    //},
+    //firebase.auth.PhoneAuthProvider.PROVIDER_ID,
     firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
   ],
   tosUrl: '<your-tos-link>',
@@ -73,7 +76,9 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
   declarations: [
     AppComponent,
     MapBoxComponent,
-    FirebaseUiComponent
+    FirebaseUiComponent,
+    //MainComponent,
+    ResultPageComponent
   ],
   imports: [
     BrowserModule,
@@ -81,7 +86,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     FirebaseUIModule.forRoot(firebaseUiAuthConfig),
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    AppRoutingModule
   ],
   providers: [MapService],
   bootstrap: [AppComponent]

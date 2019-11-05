@@ -259,7 +259,7 @@
 </style>
 
 
-
+<!--Following in result-page-->
 
 <div id="formRecoverTab" *ngIf="dismissDialogToIcon">
 <a (click)="dismissRecoverTab()"><img
@@ -270,7 +270,7 @@
 </a>
 </div>
 
-
+<!--Following in main-->
 
 <div id="message" *ngIf="!dismissDialogToIcon">
 
@@ -398,7 +398,8 @@
 
 </div> <!-- End of MESSAGE -->
 
-
+<!-- ROUTER OUTLET contains MESSAGE DIV -->
+<router-outlet></router-outlet>
 
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
