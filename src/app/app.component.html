@@ -35,7 +35,7 @@
   }
   .toolbar, .toolbarmobile img {
      /* margin: 0 16px; */
-     margin 0 0px;
+     margin: 0 0px;
   }
   .toolbar, .toolbarmobile #twitter-logo {
     height: 40px;
@@ -260,7 +260,7 @@
 
 
 <!--Following in result-page-->
-
+<!--
 <div id="formRecoverTab" *ngIf="dismissDialogToIcon">
 <a (click)="dismissRecoverTab()"><img
     width="40"
@@ -269,9 +269,10 @@
   />
 </a>
 </div>
+-->
 
 <!--Following in main-->
-
+<!--
 <div id="message" *ngIf="!dismissDialogToIcon">
 
 <div class="toolbarmobile" role="banner">
@@ -310,12 +311,12 @@
 
 </div>
 
+-->
 
  <!-- End of TOOLBARMOBILE -->
 
 
-
-
+<!--
 <div class="content" role="main">
 
 
@@ -326,17 +327,12 @@
 
 
 </div>
+-->
 
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
+<!--
 <main>
+
+-->
 
 <!--
 <ul>
@@ -354,7 +350,7 @@
     <div id="firebaseui-auth-container"></div>
 -->
 
-
+<!--
 <button (click)="dismissDialog()">Touch to search</button>
 
 <button onclick="signOut()">Sign out</button>
@@ -363,11 +359,13 @@
 
 
 <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+-->
 
 <!--Debug writing to Firestore -->
 
+<!--
 <button (click)="trigger()">Create markers</button>
-
+-->
 
 <!--
 <div *ngIf="afAuth.user | async as user; else showLogin">
@@ -393,10 +391,14 @@
 <submit-form></submit-form>
 -->
 
+<!--
 </main>
 
 
-</div> <!-- End of MESSAGE -->
+</div> 
+-->
+
+<!-- End of MESSAGE -->
 
 <!-- ROUTER OUTLET contains MESSAGE DIV -->
 <router-outlet></router-outlet>
@@ -411,7 +413,6 @@
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
 <map-box></map-box>
-
 
 
 <style>
@@ -666,7 +667,7 @@
     position: fixed;
     bottom: -160px;
     left: -230px;
-    z-index: -10;
+    z-index: 1;
     width: 1920px;
   }
 
@@ -742,6 +743,8 @@
 
 <div class="content" role="main">
   <!-- Highlight Card -->
+
+<!--REAL TIME NOTIFICATIONS BAR app is running...-->
   <div class="card highlight-card card-small">
 
     <svg id="rocket" alt="Rocket Ship" xmlns="http://www.w3.org/2000/svg" width="101.678" height="101.678" viewBox="0 0 101.678 101.678">
@@ -763,6 +766,7 @@
 -->
 
   </div>
+
 
   <!-- Resources -->
 

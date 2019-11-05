@@ -34,7 +34,7 @@ import * as firebaseui from 'firebaseui';
 import {AngularFireModule} from '@angular/fire';
 import { FirebaseUiComponent } from './firebase-ui/firebase-ui.component';
 //import { MainComponent } from './main/main.component';
-import { ResultPageComponent } from './result-page/result-page.component';
+//import { ResultPageComponent } from './result-page/result-page.component';
 import { AppRoutingModule } from './app-routing.module';
 // import {AngularFireAuthModule} from '@angular/fire/auth';
 
@@ -78,7 +78,7 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     MapBoxComponent,
     FirebaseUiComponent,
     //MainComponent,
-    ResultPageComponent
+    //ResultPageComponent
   ],
   imports: [
     BrowserModule,

@@ -38,7 +38,7 @@ function signOut() {
 
 <style media="screen">
      body { background-color: #f7f7f7; font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-     #message { z-index: 1; position: relative; background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+     #message { z-index: 9; position: relative; background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
      /*  .toolbarmobile { visibility: hidden; } */ 
 
      /* relating to MapBox */
@@ -93,14 +93,22 @@ function signOut() {
             height: 10px;
             margin-right: 5px;
         }
- 
+/* 
      @media (max-width: 600px) {
         body { padding: 0px; }
         #message { position: relative; margin-top: 0; background: white; box-shadow: none; max-width: 100%; padding: 32px 24px; } 
-        /* .toolbar { visibility: hidden; } */
-        /* .toolbar { display: none; } */
          .toolbarmobile { visibility: visible; }  
      } 
+*/
+
+  @media screen and (max-width: 600px) {
+    body, #message { padding: 0; margin-top: 0; margin: 0px; max-width: 100%; height: 800px; background: rgba(0,0,0,.93); box-shadow: none; border-radius: 0; }
+    /* body { border-top: 16px solid #ffa100; } */
+  }
+
+
+
+
 /* Marker tweaks */
 .mapboxgl-popup-close-button {
   display: none;
