@@ -88,7 +88,9 @@
     <div id="firebaseui-auth-container"></div>
 -->
 
+
 <!--DEBUGGING TOOLS for routing and first OAuth attempts 
+
 <button (click)="dismissDialog()">Touch to search</button>
 
 <button onclick="signOut()">Sign out</button>
@@ -97,8 +99,7 @@
 -->
 
 
-<!--DEBUGGING TOOLS for WRITING to FIRESTORE-->
-<!--
+<!--DEBUGGING TOOLS for WRITING to FIRESTORE
 <button (click)="trigger()">Create markers</button>
 -->
 
@@ -129,6 +130,8 @@
 <firebase-ui (signInSuccessWithAuthResult)="successCallback($event)"
              (signInFailure)="errorCallback($event)"></firebase-ui>
 <button (click)="logout()">Logout</button>
+
+<button [routerLink]="['/page']">Touch to search</button>
 
 <!-- COMMENT OUT DEBUGGING for "Naive Routing"
 <button [routerLink]="['/page']">To second page</button>

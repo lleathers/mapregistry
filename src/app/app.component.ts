@@ -19,6 +19,9 @@ const yourFirebaseConfig = {
 import * as firebase from 'firebase/app';
 firebase.initializeApp(yourFirebaseConfig);
 
+//var app = firebase.initializeApp(yourFirebaseConfig);
+
+
 // Init GeoFireX
 import * as geofirex from 'geofirex';
 
