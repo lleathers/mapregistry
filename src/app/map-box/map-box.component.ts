@@ -31,8 +31,6 @@ var app = firebase.initializeApp(yourFirebaseConfig);
 
 
 
-
-
 export interface Peaches { name: string; }
 
 
@@ -62,35 +60,103 @@ export class MapBoxComponent implements OnInit{
   x = 0;
 
 
-
  db = firebase.firestore();
- usercheck = this.db.collection('users').doc('Y3BA83d7AINX008RH0HcEDSVxpw2');
+ //dbuser = firebase.auth().user.uid;
+ //dbuser = user.uid
 
+ //userLastSeen = this.db.collection('users').doc('Y3BA83d7AINX008RH0HcEDSVxpw2');
 
-  message = 'Hello World!';
+ //userLastSeen = this.db.collection('users').doc(this.dbuser);
 
   //
   // from angularfirebase and geofirex tutorial
   //
   updateUserLocation(id) {
-    // we always save last marker location with 
-    // User account -- this.user.uid
-    // to compare neighborhoods or most significant
-    // five digits of geohash.
-    // to compare neighborhoods or most significant
-    // five digits of geohash.
-    const collection = this.geo.collection('users');
-    const lastseen = this.markerpoint;
-    collection.setDoc(id, {position: lastseen.data});
 
    // We check last location of user.
    // If most significant six digits of geohash are 
    // different, we delete marker from former
    // neighborhood. 
-  
-    this.usercheck.get().then(function(doc) {
-       if (doc.exists) {
-          console.log("Document data:", doc.data());
+ 
+   var ourneighborhood = this.neighborhood;
+   var ourgeocollection = this.geo.collection('users');
+   var ourmarkerpoint = this.markerpoint;
+ 
+   //var userLastSeen = this.db.collection('users').doc('Y3BA83d7AINX008RH0HcEDSVxpw2');
+
+   // We check last marker location saved in User account
+   // to assess whether or not in same neighborhood defined by
+   // geohash. If left neighborhood, we delete marker location in 'places'.
+
+   var userLastSeen = this.db.collection('users').doc(this.user.uid);
+   //var lastMarkerCollection = this.db.collection('places');
+
+   const userRef = this.user.uid;
+   const dbRef = this.db;
+ 
+   // var lastMarkerDocument = this.db.collection('places').doc(this.user.uid);
+
+   userLastSeen.get().then(function(collection2) {
+       if (collection2.exists) {
+          console.log("Document data:", collection2.data());
+
+          // Get fields from firestore document 
+          // through dot notation.
+          var geohashlast = collection2.get('position.geohash');
+          console.log("Printing geohash:", geohashlast);
+
+          // The most significant five digits from geohash
+          // defines our neighborhood.
+          var geohashlast_msd = geohashlast.substring(0, 5);
+
+
+          console.log("Printing old hash from user", geohashlast_msd);
+          console.log("Printing new neighborhood", ourneighborhood);
+
+          // If new location is in a different geohash,
+          // we delete old location from old neighborhood.
+          if (geohashlast_msd != ourneighborhood) {
+             // let's console log our results
+             console.log('New neighborhood. Delete old location.'); 
+
+             // Let's delete old location in 'places'
+             // lastMarkerCollection.doc(geohashlast_msd) 
+            
+            var lastMarkerDocument = dbRef.collection('places').doc(geohashlast_msd);
+
+/*
+            var removePosition = lastMarkerDocument.update({
+             Y3BA83d7AINX008RH0HcEDSVxpw2: firebase.firestore.FieldValue.delete()  
+                 }).then(function() {
+                     console.log("Document successfully deleted!");
+                 }).catch(function(error) {
+                     console.error("Error removing document: ", error);
+                 });
+*/
+           const executeFirebase = firebase.firestore.FieldValue.delete()
+
+           const integrate: string = "var removePosition = lastMarkerDocument.update({ " + eval('userRef') 
+             + ": executeFirebase"   
+             + " }).then(function() { "
+             +      'console.log("Document successfully deleted!");'
+             + " }).catch(function(error) { "
+             +      'console.error("Error removing document: ", error);'
+             + " });"
+
+           console.log(integrate);
+           
+           // The Javascript referred to a database field without using quotes. I wanted to refer
+           // to Firestore field through a variable reference. That is why this eval scheme was hatched.
+           eval(integrate);
+
+          }
+
+          // Now update the user location data.
+          const collection = ourgeocollection;
+          const lastseen = ourmarkerpoint;
+          collection.setDoc(id, {position: lastseen.data});
+          console.log("Newest neighborhood", ourmarkerpoint.hash);
+
        } else {
           // doc.data() will be undefined in this case
           console.log("No such document!");
@@ -99,28 +165,28 @@ export class MapBoxComponent implements OnInit{
         console.log("Error getting document:", error);
     });
 
-  }
-
-
- //docRef = this.geo.collection("users").doc("Y3BA83d7AINX008RH0HcEDSVxpw2");
-  
- // collectionRef = this.geo.collection("users");
-
-/*
-
-    updateUserLocation(id) {
     // we always save last marker location with 
     // User account -- this.user.uid
     // to compare neighborhoods or most significant
     // five digits of geohash.
     // to compare neighborhoods or most significant
     // five digits of geohash.
-    const collection = this.geo.collection('users');
-    const lastseen = this.markerpoint;
-    collection.setDoc(id, {position: lastseen.data});
+
+
   }
 
-*/
+
+  // adds location to Firestore using GeoFireX
+  addLocation() {
+
+    // Our field name is the Firebase User ID.
+    // Every time we click on map, we add new document or overwrite 
+    // document based upon field.
+
+    this.createPoint(this.markerpoint.coords[0], this.markerpoint.coords[1], this.user.uid)
+
+  }
+
 
   createPoint(thelat, thelng, theuserid) {
     var collection = this.geo.collection('places');
@@ -148,25 +214,6 @@ export class MapBoxComponent implements OnInit{
   }
 
 
-  trigger() {
-
-    // var field='position' + this.x;
-
-    // Our field name is the Firebase User ID.
-    // Every time we click on map, we add new document or overwrite 
-    // document based upon field.
-
-    // var field=this.user.uid;
-
-    this.createPoint(this.markerpoint.coords[0], this.markerpoint.coords[1], this.user.uid)
-
-    // this.x+=1;
-    // this.x%=4;
-
-    // this.lat+=1;
-    // this.lng+=0.001;
-  }
-
 
   /// default settings
 
@@ -175,53 +222,14 @@ export class MapBoxComponent implements OnInit{
   /// to demonstrate what the application can do
 
 
-
   // data
   source: any;
   markers: any;
-
-  itemDoc: AngularFirestoreDocument<Peaches>;
-  item: Observable<Peaches>;
-
-  thecollection = this.geo.collection('users');
-
-
-  //this.itemDoc = thecollection.data().doc<Peaches>('users/Y3BA83d7AINX008RH0HcEDSVxpw2');  
-
-
-/*
-  this.item = this.itemDoc.valueChanges();
-
-  update(item: Peaches) {
-    this.itemDoc.update(item);
-  }
-*/
 
 
 
   constructor(private mapService: MapService, private router: Router) {
   }
-
-
-
-
-/*
-  thecollection = this.geo.collection('users')
-  item: Observable<Any> = thecollection.data()
-*/  
-  
-
-
-
-
-/*
-  readUserLocation(id) {
-     const collection = this.geo.collection('users')
-     var whatis = collection.data().valueChanges()
-     console.log("collection.data contents: " + whatis)   
-
-  }
-*/
 
 
   ngOnInit() {
@@ -292,11 +300,19 @@ export class MapBoxComponent implements OnInit{
       console.log(this.latlngtext)
 
 
-      //this.readUserLocation(this.user.uid)
+      // Checks neighborhood of new marker.
+      // If not in same neighborhood of geohash 
+      // with most significant five digits, then
+      // delete former location. Otherwise always
+      // update User account with new marker
+      // location.
+
 
       this.updateUserLocation(this.user.uid)
 
-      this.trigger()
+
+      // adds location to Firestore using GeoFireX
+      this.addLocation()
 
       }
     })
