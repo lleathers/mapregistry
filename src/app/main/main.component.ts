@@ -11,13 +11,6 @@ import {Router} from '@angular/router';
 import { firebase } from 'firebaseui-angular';
 
 
-// Init GeoFireX
-import * as geofirex from 'geofirex';
-
-
-// end of import
-
-
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -25,50 +18,10 @@ import * as geofirex from 'geofirex';
 })
 
 // copy from Raphael Jenni-FirebaseUI-Angular
+// This code is our authentication procedure.
+
 export class MainComponent implements OnInit {
 
-/*
-
-  geo = geofirex.init(firebase)
-
-  lat = 40.62659207716757;
-  lng = -73.96701867575564;
-  x = 0;
-
-*/
-
-  //
-  // from angularfirebase and geofirex tutorial
-  //
-
-/*
-
-  createPoint(lat, lng, field) {
-    const collection = this.geo.collection('places')
-
-    //const field = 'position'
-  
-    // Use the convenience method
-    collection.setPoint('my-place', field, lat, lng)
-
-    // Or be a little more explicit
-    //const point = this.geo.point(lat, lng)
-    //collection.setDoc('my-place', { position: point.data })
-  }
-
-  trigger( ) {
-
-    var field='position' + this.x;
-    this.createPoint(this.lat, this.lng, field);
-
-    this.x+=1;
-    this.x%=4;
-
-    // this.lat+=1;
-    this.lng+=0.001;
-  }
-
-*/
 
   constructor(private afAuth: AngularFireAuth, private router: Router) {
   }

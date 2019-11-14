@@ -45,9 +45,11 @@ export class MapBoxComponent implements OnInit{
 
   latlngtext: any;
   user: any;
+  usr: any;
   markerpoint: any;
   hashpoint: any;
   neighborhood: any;
+  initHash: any;
 
   map: mapboxgl.Map;
   style = 'mapbox://styles/mapbox/outdoors-v9';
@@ -61,6 +63,8 @@ export class MapBoxComponent implements OnInit{
 
 
  db = firebase.firestore();
+ findUser = this.db.collection('users');
+
  //dbuser = firebase.auth().user.uid;
  //dbuser = user.uid
 
@@ -233,7 +237,50 @@ export class MapBoxComponent implements OnInit{
 
 
   ngOnInit() {
-//    this.markers = this.mapService.getMarkers()
+     
+   const toFindUser = this.findUser
+   // this.markers = this.mapService.getMarkers(this.neighborhood)
+   
+   var initHash: string = "";
+   var whatMapService = this.mapService
+ 
+    firebase.auth().onAuthStateChanged(function(user) {
+         this.usr = user;
+         const hashRef: string = "";
+
+         console.log("Who is currentUser? ", this.usr.uid);
+
+         var locationRef = toFindUser.doc(this.usr.uid);
+
+         locationRef.get().then((documentSnapshot) => {
+               if (documentSnapshot.exists) {
+                 console.log(`Document found with name '${documentSnapshot.id}'`);
+ 
+                 let fieldHash = documentSnapshot.get('position.geohash');
+                 console.log(`Retrieved field value: ${fieldHash}`);
+
+                 let hiFieldHash = fieldHash.substring(0, 5);
+                 this.hashRef = hiFieldHash;
+                 console.log(`Retrieved HASH domain: ${this.hashRef}`);
+
+                 this.markers = whatMapService.getMarkers(this.hashRef);
+               };
+         }); 
+
+         // this.markers = whatMapService.getMarkers(hashRef); 
+         // this.initHash = hashRef;         
+    });
+ 
+    //this.markers = this.mapService.getMarkers(initHash);
+
+ 
+    //var locationLast = this.db.collection('users').doc(this.usr.uid);
+    //var lastHash = locationLast.get(position);
+    //console.log("This is initial geohash: ", lastHash);
+
+    // var hiLastHash = lastHash.substring(0, 5);
+    
+ 
     this.initializeMap()
   }
 
@@ -290,7 +337,7 @@ export class MapBoxComponent implements OnInit{
       this.neighborhood = this.hashpoint.substring(0, 5) 
       console.log(this.neighborhood + ' this is our neighborhood')
 
-
+      // login, if not authenticated and click on screen
       this.user = firebase.auth().currentUser
       if (!this.user || this.user.isAnonymous) {
          this.router.navigate([''])
@@ -317,19 +364,6 @@ export class MapBoxComponent implements OnInit{
       }
     })
 
-         
-      
-/*
-map.on('mousemove', function (e) {
-document.getElementById('info').innerHTML =
-// e.point is the x, y coordinates of the mousemove event relative
-// to the top-left corner of the map
-JSON.stringify(e.point) + '<br />' +
-// e.lngLat is the longitude, latitude geographical position of the event
-JSON.stringify(e.lngLat.wrap());
-});
-*/
-
 
     /// Add realtime firebase data on map load
     this.map.on('load', (event) => {
@@ -342,6 +376,8 @@ JSON.stringify(e.lngLat.wrap());
            features: []
          }
       });
+      /// This JSON is preamble to JSON in features: array
+      /// Contents are from database or whatever source.
 
       /// get source
       this.source = this.map.getSource('firebase')
