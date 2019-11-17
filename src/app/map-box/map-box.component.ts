@@ -30,7 +30,6 @@ var app = firebase.initializeApp(yourFirebaseConfig);
 
 
 
-
 export interface Peaches { name: string; }
 
 
@@ -50,6 +49,7 @@ export class MapBoxComponent implements OnInit{
   hashpoint: any;
   neighborhood: any;
   initHash: any;
+  thecoordinates: number[];
 
   map: mapboxgl.Map;
   style = 'mapbox://styles/mapbox/outdoors-v9';
@@ -65,6 +65,10 @@ export class MapBoxComponent implements OnInit{
  db = firebase.firestore();
  findUser = this.db.collection('users');
 
+
+
+ //thecoordinates: number[]; 
+  
  //dbuser = firebase.auth().user.uid;
  //dbuser = user.uid
 
@@ -76,6 +80,8 @@ export class MapBoxComponent implements OnInit{
   // from angularfirebase and geofirex tutorial
   //
   updateUserLocation(id) {
+   var ourMapService = this.mapService;
+   var ourcoordinates = this.thecoordinates;
 
    // We check last location of user.
    // If most significant six digits of geohash are 
@@ -106,7 +112,7 @@ export class MapBoxComponent implements OnInit{
 
           // Get fields from firestore document 
           // through dot notation.
-          var geohashlast = collection2.get('position.geohash');
+          var geohashlast = collection2.get('properties.geohash');
           console.log("Printing geohash:", geohashlast);
 
           // The most significant five digits from geohash
@@ -137,33 +143,124 @@ export class MapBoxComponent implements OnInit{
                      console.error("Error removing document: ", error);
                  });
 */
-           const executeFirebase = firebase.firestore.FieldValue.delete()
 
-           const integrate: string = "var removePosition = lastMarkerDocument.update({ " + eval('userRef') 
+/*
+           var integrate: string = "var removePosition = lastMarkerDocument.update({ " + eval('userRef') 
+             + ": " + eval('executeFirebase')   
+             + " }).then(function() { "
+             +      'console.log("Document successfully deleted!");'
+             + " }).catch(function(error) { "
+             +      'console.error("Error removing document: ", error);'
+             + " });"
+*/
+
+
+/*
+           var integrate: string = "var removePosition = lastMarkeDocument.update({ " + eval('userRef') 
              + ": executeFirebase"   
              + " }).then(function() { "
              +      'console.log("Document successfully deleted!");'
              + " }).catch(function(error) { "
              +      'console.error("Error removing document: ", error);'
              + " });"
+*/
+
+/*
+//TESTING use of all field names with '[]'
+  
+           var integrate =  lastMarkerDocument.update({ 
+              ['Y3BA83d7AINX008RH0HcEDSVxpw2'] : firebase.firestore.FieldValue.delete() 
+             // tfmcb: firebase.firestore.FieldValue.delete() 
+                }).then(function() { 
+                   console.log(`Document successfully deleted!`); 
+                }).catch(function(error) {  
+                   console.error(`Error removing document: `, error); 
+                });
 
            console.log(integrate);
-           
+*/
+
+// THIS IS ROUTE TO THE SOLUTION
+//
+// LESSON TO BE LEARNED: use '[5lkrtkljelkrjt]' to refer to field names that begin with numbers!!!
+//
+/*
+           var integrate =  lastMarkerDocument.update({ 
+              ['5tfmcbY0EJg4o4vWzTEsWMPCyBU2'] : firebase.firestore.FieldValue.delete() 
+             // tfmcb: firebase.firestore.FieldValue.delete() 
+                }).then(function() { 
+                   console.log(`Document successfully deleted!`); 
+                }).catch(function(error) {  
+                   console.error(`Error removing document: `, error); 
+                });
+
+           console.log(integrate);
+*/
+
+
+
+           const executeFirebase = firebase.firestore.FieldValue.delete()
+
+           const integrate: string = 
+               " lastMarkerDocument.update({ ['" + eval('userRef') + 
+               "'] : executeFirebase" +  
+               " }).then(function() { " +
+               "    console.log(`Document successfully deleted!`);" +
+               " }).catch(function(error) { " +
+               "    console.error(`Error removing document: `, error);" +
+               " });"
+
+           console.log(integrate);
+           eval(integrate);
+       
+/*        
+
+           const executeFirebase = firebase.firestore.FieldValue.delete()
+
+           const integrate: string = 
+               " lastMarkeDocument.update({ " + eval('userRef') + 
+               ": executeFirebase" +  
+               " }).then(function() { " +
+               "    console.log(`Document successfully deleted!`);" +
+               " }).catch(function(error) { " +
+               "    console.error(`Error removing document: `, error);" +
+               " });"
+
+           console.log(integrate);
+           eval(integrate);
+*/
+       
            // The Javascript referred to a database field without using quotes. I wanted to refer
            // to Firestore field through a variable reference. That is why this eval scheme was hatched.
-           eval(integrate);
 
           }
 
-          // Now update the user location data.
-          const collection = ourgeocollection;
-          const lastseen = ourmarkerpoint;
-          collection.setDoc(id, {position: lastseen.data});
-          console.log("Newest neighborhood", ourmarkerpoint.hash);
+        // Now update the user location data.
+        const collection = ourgeocollection;
+        const lastseen = ourmarkerpoint;
+
+        // GeoJson mediates 'users' collection, now
+        var newMarker1 = new GeoJson(ourcoordinates, { message: "hello, there", geohash: ourmarkerpoint.hash })
+        ourMapService.createMarker(newMarker1)
+
+        //  collection.setDoc(id, {position: lastseen.data});
+        console.log("Newest neighborhood", ourmarkerpoint.hash);
 
        } else {
-          // doc.data() will be undefined in this case
-          console.log("No such document!");
+        // doc.data() will be undefined in this case
+        // We add new user to 'users' collection.
+          console.log("No such document, so we welcome new user!");
+  
+        const collection = ourgeocollection;
+        const lastseen = ourmarkerpoint;
+ 
+        // GeoJson mediates 'users' collection, now
+        var newMarker2 = new GeoJson(ourcoordinates, { message: "hello, there", geohash: ourmarkerpoint.hash })
+        ourMapService.createMarker(newMarker2)
+
+        //  collection.setDoc(id, {position: lastseen.data});
+        console.log("Newest neighborhood", ourmarkerpoint.hash);
+
        }
     }).catch(function(error) {
         console.log("Error getting document:", error);
@@ -231,7 +328,6 @@ export class MapBoxComponent implements OnInit{
   markers: any;
 
 
-
   constructor(private mapService: MapService, private router: Router) {
   }
 
@@ -256,7 +352,7 @@ export class MapBoxComponent implements OnInit{
                if (documentSnapshot.exists) {
                  console.log(`Document found with name '${documentSnapshot.id}'`);
  
-                 let fieldHash = documentSnapshot.get('position.geohash');
+                 let fieldHash = documentSnapshot.get('properties.geohash');
                  console.log(`Retrieved field value: ${fieldHash}`);
 
                  let hiFieldHash = fieldHash.substring(0, 5);
@@ -321,10 +417,22 @@ export class MapBoxComponent implements OnInit{
 //    })
 
     this.map.on('click', (event) => {
-      const coordinates = [event.lngLat.lng, event.lngLat.lat]
+      var coordinates = [event.lngLat.lng, event.lngLat.lat]
+      this.thecoordinates = coordinates
 
       this.markerpoint = this.geo.point(event.lngLat.lat, event.lngLat.lng)
       
+      // Now connecting from Firestore to markers!!
+
+      //const newMarker   = new GeoJson(coordinates, { message: this.message })
+
+      //TESTING -- WRITE TO FIRESTORE -- NOW WORKS SO COMMENT OUT...
+      // updateUserLocation() is meant to manage all user feature data
+      // via GeoJSON.
+      //const newMarker   = new GeoJson(coordinates, { message: "hello, there", geohash: this.markerpoint.hash })
+      //this.mapService.createMarker(newMarker)
+      // ^^^^^^^ COMMENT OUT ^^^^^^^^
+
       // We need a geohash from user chosen point, markerpoint,
       // to locate neighborhood, called hashpoint. 
 

@@ -8,6 +8,11 @@ import * as mapboxgl from 'mapbox-gl';
 
 import { firebase } from 'firebaseui-angular';
 
+
+
+const fs = firebase.firestore();
+
+
 @Injectable()
 export class MapService {
 
@@ -21,15 +26,7 @@ export class MapService {
 //    return this.db.list('/markers')
 //  }
 
-//theuserid2: any  
 
-/*
-     firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          theuserid2 = user.uid; 
-        };
-     });
-*/
 
     getMarkers(locale) {
       var documentRef = this.db.collection('places').doc(locale);
@@ -44,17 +41,10 @@ export class MapService {
      var userid: string = "amazing";
      // this.theuserid2 = userid;
 
-/*
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          userid = user.uid
-          console.log("from authentication user.uid:", userid) 
-          // theuserid2 = user.uid
-          //this.testid = user.uid
-        }
-     });
-*/
 
+     documentRef.get().subscribe((docSnap) => {
+              console.log("PRINT ALL FIELDS: ", docSnap.data());
+     });
 
     async function retrieveField() {
 
@@ -65,7 +55,6 @@ export class MapService {
             }
           });
     }
-
 
     retrieveField().then(() => {
 
@@ -157,6 +146,72 @@ export class MapService {
 //    return this.db.list('/markers')
 //                  .push(data)
 //  }
+
+   createMarker(data: GeoJson) {
+
+      firebase.auth().onAuthStateChanged(function(checkuser) {
+            var checkuserid = checkuser.uid 
+            var jsonString = JSON.stringify(data);
+            console.log('SHOW me STRINGIFIED data: ', jsonString);      
+            console.log('SHOW me your id please: ', checkuserid);
+            return fs.collection('users').doc(checkuserid).set(Object.assign({},data)); 
+            })
+        //    .catch(function(error) {
+        //       console.error("Error writing document: ", error);
+        //   })
+  }
+
+/*
+   createMarker(data: GeoJson) {
+
+      firebase.auth().onAuthStateChanged(function(checkuser) {
+          if (checkuser) {
+            var checkuserid = checkuser.uid 
+            var jsonString = JSON.stringify(data);
+            console.log('SHOW me STRINGIFIED data: ', jsonString);      
+            console.log('SHOW me your id please: ', checkuserid);
+            fs.collection('users').doc(checkuserid).set(jsonString) 
+            } else {
+            console.error("Error, no user: ", error)
+            })
+            .catch(function(error) {
+               console.error("Error writing document: ", error);
+           })
+      }
+   }
+*/
+
+
+/*
+   createMarker(data: GeoJson) {
+
+    async function retrieveField2() {
+
+      firebase.auth().onAuthStateChanged(function(checkuser) {
+          if (checkuser) {
+            var checkuserid = checkuser.uid 
+            console.log("from authentication checkuserid:", checkuserid) 
+            return checkuserid;
+            }
+          });
+    }
+
+
+    //get Userid.
+    retrieveField2().then(function(id)  {
+       
+      var jsonString = JSON.stringify(data);
+      console.log('SHOW me STRINGIFIED data: ', jsonString);      
+      console.log('SHOW me your id please: ', this.checkuserid);
+      return fs.collection('users').doc(id).set(jsonString)
+      })
+      .catch(function(error) {
+          console.error("Error writing document: ", error);
+      });
+    }
+*/      
+    
+
 
 //  removeMarker($key: string) {
 //    return this.db.object('/markers/' + $key).remove()
