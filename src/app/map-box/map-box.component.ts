@@ -281,8 +281,7 @@ export class MapBoxComponent implements OnInit{
 
   // data
   source: any;
-  markers: Array<GeoJson>;
-  // markers: any;
+  markers: any;
 
   markermonster: any;
 
@@ -308,66 +307,10 @@ export class MapBoxComponent implements OnInit{
 
 
 
-  // new Observable((observer) => { toMapService.getMarkers() }
-/* 
-    this.markermonster = new Observable(subscriber => {
-     //subscriber.next(toMapService.getMarkers())
-     //subscriber.next(25)
-     var ourObj: any
-     async func() {
-        let newObj = await toMapService.getMarkers.toPromise()
-
-        Promise.all
-        var evaluate: string = "subscriber.next(" + JSONstringify(ourObj) + ")"
-        eval(evaluate) 
-        }
-    })
-*/
-
-/*
-   Promise.resolve(toMapService.getMarkers())
-         .then((result) => { 
-            this.markermonster = new Observable(observer => {
-               observer.next(result)
-            })
-            console.log("WHAT IS MONSTER?", result)
-          }) 
-*/
-
-
-
-   this.markermonster = new Observable(observer => {
-       setTimeout(() => {
-           observer.next(toMapService.getMarkers())
-       }, 10);
-   })
-  
-
-
-/*
-  toMapService.getMarkers.subscribe( query => {
-      this.markermonster = query
-      })
-*/
-
-/*
-    toMapService.getTransactions().then(
-        r => {
-          this.markermonster = new Observable(subscriber => {
-          subscriber.next(r)
-          })
-        })
-*/
-
-/*
-    this.markermonster = new Observable(subscriber => {
-    subscriber.next(toMapService.getMarkers())
-    //subscriber.next(25)
-    })
-
-  // this.markers = toMapService.getMarkers()
-*/
-
+   //We have the markers observable
+   //Now everyone can subscribe to marker changes
+   this.markers = toMapService.markers
+   
  
 /* 
    var initHash: string = "";
@@ -549,19 +492,19 @@ export class MapBoxComponent implements OnInit{
      })
 */
 
-     this.markermonster.subscribe(markers => {
+/*
+     this.markers.subscribe(markers => {
         console.log("MARKERS AGAIN PLEASE:", makeArray);
         let data = new FeatureCollection(makeArray)
         this.source.setData(data)
      })
+*/
 
-/*
-     this.markermonster.subscribe(markers => {
+     this.markers.subscribe(markers => {
         console.log("MARKERS AGAIN PLEASE:", markers);
         let data = new FeatureCollection(markers)
         this.source.setData(data)
      })
-*/
 
 /*
       this.markers.subscribe(markers => {

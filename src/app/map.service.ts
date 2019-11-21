@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
 import { AngularFirestore, AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Observable }  from 'rxjs';
 
 import { GeoJson } from './map';
@@ -12,32 +13,40 @@ import { firebase } from 'firebaseui-angular';
 
 const fs = firebase.firestore();
 
+var checkuserid: any = "";  
+
+firebase.auth().onAuthStateChanged(function(checkuser) {
+   checkuserid = checkuser.uid
+   })    
 
 @Injectable()
 export class MapService {
 
-  constructor(private db: AngularFirestore) {
-    mapboxgl.accessToken = environment.mapbox.accessToken
-  }
+    private markersCollection: AngularFirestoreCollection<GeoJson>;
+    markers: Observable<GeoJson[]>;
+    theuserid = checkuserid;
 
+    constructor(private db: AngularFirestore) {
+        mapboxgl.accessToken = environment.mapbox.accessToken
+        this.markersCollection = db.collection<GeoJson>('users')
+        this.markers = this.markersCollection.valueChanges()
+    }
 
+    /// Add marker routine
+    createMarker(data: GeoJson) {
+        const id = this.theuserid
+	const marker: GeoJson = data
+	this.markersCollection.doc(id).set(marker)
+	}
 
 //  getMarkers(): FirebaseListObservable<any> {
 //    return this.db.list('/markers')
 //  }
 
-/*
-    getTransactions(): Observable<any> {
-      return this.getMarkers().toPromise()
-        .then(response => {
-            return response
-        }).catch(error => {
-          return Promise.reject(error)
-        })
-     }
-*/
 
     ///TESTING PURPOSES ONLY--ACHTUNG! WE ARE PRINTING ALL USERS!!!
+
+/*
     getMarkers() {
 
       let usersRef = this.db.collection('users');
@@ -56,7 +65,7 @@ export class MapService {
                         return response
                         });
     }
-
+*/
 
 /*
     ///TESTING PURPOSES ONLY--ACHTUNG! WE ARE PRINTING ALL USERS!!!
@@ -83,28 +92,6 @@ export class MapService {
 
 
 
-
-
-    ///TESTING PURPOSES ONLY--ACHTUNG! WE ARE PRINTING ALL USERS!!!
-    getMarkers___(locale) {
-      let usersRef = this.db.collection('users');
-      let allUsers = usersRef.get() 
-                        .subscribe(query => {
-                           let hey = []
-                           query.forEach(doc => {
-                              //no, no that is the other direction
-                              // record = Object.assign({}, doc.data())
-                              //deserialize back to JavaScript object
-                              
-                              hey.push(doc.data()) 
-                              console.log(doc.id, " => ", doc.data());
-                           });
-                        console.log("WHAT IS ARRAY? :", hey)
-                        //return { a : "100"} 
-                        });
-    console.log("WHAT ARE allUsers:", allUsers)
-    return allUsers;
-    }
 
 
     ///WE MUST FIX-- do not use geofirex to create markers anymore
@@ -234,6 +221,8 @@ export class MapService {
 //                  .push(data)
 //  }
 
+
+/*
    createMarker(data: GeoJson) {
 
       firebase.auth().onAuthStateChanged(function(checkuser) {
@@ -248,6 +237,7 @@ export class MapService {
             return toAssign
             }) 
   }
+*/
 
 /*
    createMarker(data: GeoJson) {
