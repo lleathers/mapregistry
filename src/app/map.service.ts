@@ -24,7 +24,6 @@ export class MapService {
 
     private markersCollection: AngularFirestoreCollection<GeoJson>;
     markers: Observable<GeoJson[]>;
-    theuserid = checkuserid;
 
     constructor(private db: AngularFirestore) {
         mapboxgl.accessToken = environment.mapbox.accessToken
@@ -34,8 +33,8 @@ export class MapService {
 
     /// Add marker routine
     createMarker(data: GeoJson) {
-        const id = this.theuserid
-	const marker: GeoJson = data
+        const id = checkuserid 
+	const marker = Object.assign({}, data) 
 	this.markersCollection.doc(id).set(marker)
 	}
 
