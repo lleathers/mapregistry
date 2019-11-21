@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import * as mapboxgl from 'mapbox-gl';
 import { MapService } from '../map.service';
 import { GeoJson, FeatureCollection } from '../map';
-import { Observable } from 'rxjs';
+import { Observable, from } from 'rxjs';
 
 import { Router } from '@angular/router';
 import { firebase } from 'firebaseui-angular';
@@ -65,7 +65,7 @@ export class MapBoxComponent implements OnInit{
  db = firebase.firestore();
  findUser = this.db.collection('users');
 
-
+ arraytestmarker: any;
 
  //thecoordinates: number[]; 
   
@@ -91,6 +91,7 @@ export class MapBoxComponent implements OnInit{
    var ourneighborhood = this.neighborhood;
    var ourgeocollection = this.geo.collection('users');
    var ourmarkerpoint = this.markerpoint;
+
  
    //var userLastSeen = this.db.collection('users').doc('Y3BA83d7AINX008RH0HcEDSVxpw2');
 
@@ -144,41 +145,6 @@ export class MapBoxComponent implements OnInit{
                  });
 */
 
-/*
-           var integrate: string = "var removePosition = lastMarkerDocument.update({ " + eval('userRef') 
-             + ": " + eval('executeFirebase')   
-             + " }).then(function() { "
-             +      'console.log("Document successfully deleted!");'
-             + " }).catch(function(error) { "
-             +      'console.error("Error removing document: ", error);'
-             + " });"
-*/
-
-
-/*
-           var integrate: string = "var removePosition = lastMarkeDocument.update({ " + eval('userRef') 
-             + ": executeFirebase"   
-             + " }).then(function() { "
-             +      'console.log("Document successfully deleted!");'
-             + " }).catch(function(error) { "
-             +      'console.error("Error removing document: ", error);'
-             + " });"
-*/
-
-/*
-//TESTING use of all field names with '[]'
-  
-           var integrate =  lastMarkerDocument.update({ 
-              ['Y3BA83d7AINX008RH0HcEDSVxpw2'] : firebase.firestore.FieldValue.delete() 
-             // tfmcb: firebase.firestore.FieldValue.delete() 
-                }).then(function() { 
-                   console.log(`Document successfully deleted!`); 
-                }).catch(function(error) {  
-                   console.error(`Error removing document: `, error); 
-                });
-
-           console.log(integrate);
-*/
 
 // THIS IS ROUTE TO THE SOLUTION
 //
@@ -213,22 +179,6 @@ export class MapBoxComponent implements OnInit{
            console.log(integrate);
            eval(integrate);
        
-/*        
-
-           const executeFirebase = firebase.firestore.FieldValue.delete()
-
-           const integrate: string = 
-               " lastMarkeDocument.update({ " + eval('userRef') + 
-               ": executeFirebase" +  
-               " }).then(function() { " +
-               "    console.log(`Document successfully deleted!`);" +
-               " }).catch(function(error) { " +
-               "    console.error(`Error removing document: `, error);" +
-               " });"
-
-           console.log(integrate);
-           eval(integrate);
-*/
        
            // The Javascript referred to a database field without using quotes. I wanted to refer
            // to Firestore field through a variable reference. That is why this eval scheme was hatched.
@@ -240,9 +190,15 @@ export class MapBoxComponent implements OnInit{
         const lastseen = ourmarkerpoint;
 
         // GeoJson mediates 'users' collection, now
-        var newMarker1 = new GeoJson(ourcoordinates, { message: "hello, there", geohash: ourmarkerpoint.hash })
-        ourMapService.createMarker(newMarker1)
+        var newMarker1 = new GeoJson(ourcoordinates, { message: "hello, there", geohash: ourmarkerpoint.hash, 
+                                presence: "available", username: "default" })
 
+
+
+///TESTING to understand what form Firestore can understand
+        console.log("PLEASE SHARE GEOJSON:", newMarker1)
+        ourMapService.createMarker(newMarker1)
+ 
         //  collection.setDoc(id, {position: lastseen.data});
         console.log("Newest neighborhood", ourmarkerpoint.hash);
 
@@ -325,28 +281,110 @@ export class MapBoxComponent implements OnInit{
 
   // data
   source: any;
-  markers: any;
+  markers: Array<GeoJson>;
+  // markers: any;
+
+  markermonster: any;
 
 
   constructor(private mapService: MapService, private router: Router) {
   }
 
+  //markermonster = from(this.mapService.getMarkers);
+
 
   ngOnInit() {
-     
+   const toMapService = this.mapService  
    const toFindUser = this.findUser
-   // this.markers = this.mapService.getMarkers(this.neighborhood)
-   
+   //toMarkers: Array<GeoJson>
+
+   firebase.auth().onAuthStateChanged(function(user) {
+      this.usr = user;
+   })
+
+// Notice that assignment to this.markers occurs before return from getMarkers!!!
+// This is why you coerce assignment after return from getMarkers
+//   console.log("FROM GETMARKERS:", this.markers = this.mapService.getMarkers())
+
+
+
+  // new Observable((observer) => { toMapService.getMarkers() }
+/* 
+    this.markermonster = new Observable(subscriber => {
+     //subscriber.next(toMapService.getMarkers())
+     //subscriber.next(25)
+     var ourObj: any
+     async func() {
+        let newObj = await toMapService.getMarkers.toPromise()
+
+        Promise.all
+        var evaluate: string = "subscriber.next(" + JSONstringify(ourObj) + ")"
+        eval(evaluate) 
+        }
+    })
+*/
+
+/*
+   Promise.resolve(toMapService.getMarkers())
+         .then((result) => { 
+            this.markermonster = new Observable(observer => {
+               observer.next(result)
+            })
+            console.log("WHAT IS MONSTER?", result)
+          }) 
+*/
+
+
+
+   this.markermonster = new Observable(observer => {
+       setTimeout(() => {
+           observer.next(toMapService.getMarkers())
+       }, 10);
+   })
+  
+
+
+/*
+  toMapService.getMarkers.subscribe( query => {
+      this.markermonster = query
+      })
+*/
+
+/*
+    toMapService.getTransactions().then(
+        r => {
+          this.markermonster = new Observable(subscriber => {
+          subscriber.next(r)
+          })
+        })
+*/
+
+/*
+    this.markermonster = new Observable(subscriber => {
+    subscriber.next(toMapService.getMarkers())
+    //subscriber.next(25)
+    })
+
+  // this.markers = toMapService.getMarkers()
+*/
+
+ 
+/* 
    var initHash: string = "";
    var whatMapService = this.mapService
+
+   var markersorigin = this.markers;
  
     firebase.auth().onAuthStateChanged(function(user) {
          this.usr = user;
          const hashRef: string = "";
+         var tothemarkers: GeoJson[] 
 
          console.log("Who is currentUser? ", this.usr.uid);
 
          var locationRef = toFindUser.doc(this.usr.uid);
+
+         this.markersorigin = tothemarkers;
 
          locationRef.get().then((documentSnapshot) => {
                if (documentSnapshot.exists) {
@@ -359,7 +397,9 @@ export class MapBoxComponent implements OnInit{
                  this.hashRef = hiFieldHash;
                  console.log(`Retrieved HASH domain: ${this.hashRef}`);
 
-                 this.markers = whatMapService.getMarkers(this.hashRef);
+                 this.tothemarkers = whatMapService.getMarkers(this.hashRef);
+                 console.log("MARKERS PLEASE:", this.tothemarkers);
+                 
                };
          }); 
 
@@ -375,7 +415,7 @@ export class MapBoxComponent implements OnInit{
     //console.log("This is initial geohash: ", lastHash);
 
     // var hiLastHash = lastHash.substring(0, 5);
-    
+ */   
  
     this.initializeMap()
   }
@@ -491,10 +531,44 @@ export class MapBoxComponent implements OnInit{
       this.source = this.map.getSource('firebase')
 
       /// subscribe to realtime database and set data source
-//      this.markers.subscribe(markers => {
-//          let data = new FeatureCollection(markers)
-//          this.source.setData(data)
-//      })
+
+     // console.log("ARRAYTESTMARKER:", this.arraytestmarker)
+
+//TESTING for interface with MapBox API
+     var TESTMarker = new GeoJson([-73.9237405202382, 40.61766398344872], { message: "hello, there", geohash: "dr5rhg97w", 
+                                presence: "available", username: "default" })
+
+     var makeArray = [TESTMarker]
+
+
+/*
+     this.markermonster.subscribe(markers => {
+        console.log("MARKERS AGAIN PLEASE:", markers);
+        let data = new FeatureCollection(markers)
+        this.source.setData(data)
+     })
+*/
+
+     this.markermonster.subscribe(markers => {
+        console.log("MARKERS AGAIN PLEASE:", makeArray);
+        let data = new FeatureCollection(makeArray)
+        this.source.setData(data)
+     })
+
+/*
+     this.markermonster.subscribe(markers => {
+        console.log("MARKERS AGAIN PLEASE:", markers);
+        let data = new FeatureCollection(markers)
+        this.source.setData(data)
+     })
+*/
+
+/*
+      this.markers.subscribe(markers => {
+          let data = new FeatureCollection(markers)
+          this.source.setData(data)
+      })
+*/
 
       /// create map layers with realtime data
       this.map.addLayer({

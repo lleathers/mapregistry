@@ -26,13 +26,100 @@ export class MapService {
 //    return this.db.list('/markers')
 //  }
 
+/*
+    getTransactions(): Observable<any> {
+      return this.getMarkers().toPromise()
+        .then(response => {
+            return response
+        }).catch(error => {
+          return Promise.reject(error)
+        })
+     }
+*/
+
+    ///TESTING PURPOSES ONLY--ACHTUNG! WE ARE PRINTING ALL USERS!!!
+    getMarkers() {
+
+      let usersRef = this.db.collection('users');
+      let allUsers = usersRef.get() 
+                        .subscribe(query => {
+                           let response: GeoJson[] = []
+                           let geoObject: GeoJson 
+                           query.forEach(docQuery => {
+                              var geoCoords: [] = docQuery.data().geometry.coordinates 
+                              var geoMessge: string = docQuery.data().properties.message
+                              geoObject = new GeoJson(geoCoords, { message: geoMessge })
+                              response.push(geoObject)
+                              console.log(docQuery.id, " => ", docQuery.data());
+                           });
+                        console.log("WHAT IS RESPONSE:", response)
+                        return response
+                        });
+    }
 
 
-    getMarkers(locale) {
+/*
+    ///TESTING PURPOSES ONLY--ACHTUNG! WE ARE PRINTING ALL USERS!!!
+    getMarkers() {
+
+
+      let usersRef = this.db.collection('users');
+      let allUsers = usersRef.get() 
+                        .subscribe(query => {
+                           let response: GeoJson[] = []
+                           let geoObject: GeoJson 
+                           query.forEach(docQuery => {
+                              var geoCoords: [] = docQuery.data().geometry.coordinates 
+                              var geoMessge: string = docQuery.data().properties.message
+                              geoObject = new GeoJson(geoCoords, { message: geoMessge })
+                              response.push(geoObject)
+                              console.log(docQuery.id, " => ", docQuery.data());
+                           });
+                        console.log("WHAT IS RESPONSE:", response)
+                        return response
+                        });
+    }
+*/
+
+
+
+
+
+    ///TESTING PURPOSES ONLY--ACHTUNG! WE ARE PRINTING ALL USERS!!!
+    getMarkers___(locale) {
+      let usersRef = this.db.collection('users');
+      let allUsers = usersRef.get() 
+                        .subscribe(query => {
+                           let hey = []
+                           query.forEach(doc => {
+                              //no, no that is the other direction
+                              // record = Object.assign({}, doc.data())
+                              //deserialize back to JavaScript object
+                              
+                              hey.push(doc.data()) 
+                              console.log(doc.id, " => ", doc.data());
+                           });
+                        console.log("WHAT IS ARRAY? :", hey)
+                        //return { a : "100"} 
+                        });
+    console.log("WHAT ARE allUsers:", allUsers)
+    return allUsers;
+    }
+
+
+    ///WE MUST FIX-- do not use geofirex to create markers anymore
+    ///Use GeoFireX to generate geohashes ONLY!
+    /// 
+    getMarkers__(locale) {
+
       var documentRef = this.db.collection('places').doc(locale);
-//      var documentRef = this.db.collection("places").doc('dr5qv');
+      /// Return document with all users who share your locale
+      return documentRef;
 
-//      var documentRef = this.db.doc('places/dr5qv');
+    }
+
+    getMarkers_(locale) {
+      var documentRef = this.db.collection('places').doc(locale);
 
 
      //We are to recover fields from locale neighborhood
@@ -154,11 +241,12 @@ export class MapService {
             var jsonString = JSON.stringify(data);
             console.log('SHOW me STRINGIFIED data: ', jsonString);      
             console.log('SHOW me your id please: ', checkuserid);
-            return fs.collection('users').doc(checkuserid).set(Object.assign({},data)); 
-            })
-        //    .catch(function(error) {
-        //       console.error("Error writing document: ", error);
-        //   })
+
+            var toAssign = Object.assign({},data)
+            console.log('SHOW Object.assign version: ', toAssign)
+            fs.collection('users').doc(checkuserid).set(toAssign)
+            return toAssign
+            }) 
   }
 
 /*
